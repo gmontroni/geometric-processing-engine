@@ -5,5 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "meshio>=5.3.5",
     "numpy>=2.2.6",
+    "polyscope>=2.4.0",
 ]
+
+[tool.setuptools]
+packages = ["pyvet"]
+[tool.setuptools.package-dir]
+"pyvet" = "src/geommodules/pyvet"

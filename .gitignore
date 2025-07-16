@@ -1,8 +1,11 @@
 # Ignorar pastas __pycache__ em qualquer lugar
 **/__pycache__/
 
-/output/
-/verification/
+output/**
+!output/.gitkeep
+
+verification/**
+!verification/.gitkeep
 
 # Ignorar arquivos compilados Python
 *.pyc

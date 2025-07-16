@@ -11,3 +11,4 @@ verification/**
 *.pyc
 *.pyo
 *.pyd
+*.ini

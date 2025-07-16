@@ -6,11 +6,17 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "meshio>=5.3.5",
+    "numba>=0.61.2",
     "numpy>=2.2.6",
     "polyscope>=2.4.0",
+    "scipy>=1.15.3",
 ]
 
-[tool.setuptools]
-packages = ["pyvet"]
-[tool.setuptools.package-dir]
-"pyvet" = "src/geommodules/pyvet"
+# [tool.setuptools]
+# packages = ["pyvet"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# [tool.setuptools.package-dir]
+# "pyvet" = "src/geopackages/pyvet"

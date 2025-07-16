@@ -12,11 +12,10 @@ dependencies = [
     "scipy>=1.15.3",
 ]
 
-# [tool.setuptools]
-# packages = ["pyvet"]
-
 [tool.setuptools.packages.find]
 where = ["src"]
 
-# [tool.setuptools.package-dir]
-# "pyvet" = "src/geopackages/pyvet"
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+]

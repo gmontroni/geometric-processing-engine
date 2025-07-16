@@ -3,9 +3,7 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET, normalize
-# from rbf_fd_operators import compute_surface_operators3dd, compute_surface_operators_with_reliability
+from geopackages.vet.pyvet import VET
 
 # Global variables for interactive parameters
 w_theta = 0.34
@@ -193,12 +191,12 @@ def main():
     # Input mesh
     if len(sys.argv) <= 1:
         print("Erro: É necessário especificar um arquivo de malha.")
-        print("Uso: python3 stencil.py <arquivo.obj>")
+        print("Uso: uv run src/stencil_visualization.py <arquivo.obj>")
         sys.exit(1)
         
     meshName = sys.argv[1]
     if '/' not in meshName:
-        fileName = f'input/{meshName}'
+        fileName = f'meshes/{meshName}'
     else:
         fileName = meshName
 

@@ -1,8 +1,8 @@
 import numpy as np
-from src.geopackages.vet.vector_operators import tangentPlane, unitVector, surfProjection, convert3Drealto2D
+from geopackages.vet.vector_operators import tangentPlane, unitVector, surfProjection, convert3Drealto2D
 
 # Transporte paralelo
-def parallelTransport(vertices, basis_x, basis_y, normal, initial_vector = None, connectivity = None, rings = None):
+def transportVector(vertices, basis_x, basis_y, normal, initial_vector = None, connectivity = None, rings = None):
     num_vertices = len(vertices)
 
     # Plano tangente
@@ -69,7 +69,7 @@ def parallelTransport(vertices, basis_x, basis_y, normal, initial_vector = None,
     return R, V
 
 # Transporte paralelo
-def parallelTransportv2(vertices, basis_x, basis_y, normal, initial_vector = None, connectivity = None, rings = None):
+def transportVectorv2(vertices, basis_x, basis_y, normal, initial_vector = None, connectivity = None, rings = None):
     num_vertices = len(vertices)
 
     # Plano tangente

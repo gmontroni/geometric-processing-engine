@@ -5,11 +5,10 @@ import polyscope as ps
 from scipy.sparse.linalg import spsolve
 from scipy.sparse import eye, csr_matrix
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET
-from parallelTransport import parallelTransportv2
-from vector_heat_functions import buildSourceVectors, computeConnectionLaplacian, buildY0, buildVecHeatOperator, solveVectorHeat
-from rbf_fd_operators import compute_surface_operators3d, compute_surface_operators3dd, compute_surface_operators_with_reliability
+from geopackages.vet.pyvet import VET
+# from geopackages.paralleltransport import transportVectorv2
+from geopackages.vectorheat import buildSourceVectors, computeConnectionLaplacian, buildY0, buildVecHeatOperator, solveVectorHeat
+from geopackages.rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
 
@@ -17,13 +16,13 @@ def main():
     # Verificar se um arquivo foi especificado
     if len(sys.argv) <= 1:
         print("Erro: É necessário especificar um arquivo de malha.")
-        print("Uso: python3 vectorHeat.py <arquivo.obj>")
+        print("Uso: uv run src/vectorHeat.py <arquivo.obj>")
         sys.exit(1)
         
     meshName = sys.argv[1]
     # meshName = 'torus.obj'
     if '/' not in meshName:
-        fileName = f'input/{meshName}'
+        fileName = f'meshes/{meshName}'
     else:
         fileName = meshName
     # print(f"Carregando malha: {meshName}")

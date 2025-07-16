@@ -1,1 +1,0 @@
-from geopackages.rbf.weights_rbf_fd_2d import rbf_fd_weights

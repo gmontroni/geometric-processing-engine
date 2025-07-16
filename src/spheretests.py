@@ -3,15 +3,14 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET, normalize
-from vector_operators import surfProjection
-from rbf_fd_operators import compute_surface_operators, compute_surface_operators3d
+from geopackages.vet import VET, normalize
+from geopackages.vet.vector_operators import surfProjection
+from geopackages.rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
 
     # Input mesh
-    mesh = meshio.read('input/sphere.obj', file_format='obj')
+    mesh = meshio.read('meshes/sphere.obj', file_format='obj')
     pts = mesh.points
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 

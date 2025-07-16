@@ -1,0 +1,36 @@
+from .vector_heat_functions import (unit,
+                                    normalizeVector,
+                                    buildTangentBasis,
+                                    buildSourceVectors,
+                                    angleInPlane,
+                                    rotateAround,
+                                    transportBetweenOriented,
+                                    transportBetweenOrientedSVD,
+                                    computeConnectionLaplacian,
+                                    computeConnectionLaplacianSVD,
+                                    complexToReal,
+                                    realtoComplex,
+                                    complextoReal,
+                                    buildY0,
+                                    buildVecHeatOperator,
+                                    solveVectorHeat
+)
+
+__all__ = [
+    'unit',
+    'normalizeVector',
+    'buildTangentBasis',
+    'buildSourceVectors',
+    'angleInPlane',
+    'rotateAround',
+    'transportBetweenOriented',
+    'transportBetweenOrientedSVD',
+    'computeConnectionLaplacian',
+    'computeConnectionLaplacianSVD',
+    'complexToReal',
+    'realtoComplex',
+    'complextoReal',
+    'buildY0',
+    'buildVecHeatOperator',
+    'solveVectorHeat'
+]

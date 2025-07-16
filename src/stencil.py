@@ -3,9 +3,8 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET, normalize
-from rbf_fd_operators import compute_surface_operators3dd, compute_surface_operators_with_reliability
+from geopackages.vet.pyvet import VET
+# from geopackages.rbf.rbf_fd_operators import compute_surface_operators3dd, compute_surface_operators_with_reliability
 
 def main():
 
@@ -13,12 +12,12 @@ def main():
     # Verificar se um arquivo foi especificado
     if len(sys.argv) <= 1:
         print("Erro: É necessário especificar um arquivo de malha.")
-        print("Uso: python3 vectorHeat.py <arquivo.obj>")
+        print("Uso: uv run src/stencil.py <arquivo.obj>")
         sys.exit(1)
         
     meshName = sys.argv[1]
     if '/' not in meshName:
-        fileName = f'input/{meshName}'
+        fileName = f'meshes/{meshName}'
     else:
         fileName = meshName
     # print(f"Carregando malha: {meshName}")

@@ -5,8 +5,7 @@ import scipy.spatial.distance as sd
 import numpy.polynomial.polynomial as pp
 from scipy.spatial import KDTree
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET
+from geopackages.vet import VET
 
 def rbf_fd_weights(X, ctr, s, d):
   #   X : each row contains one node in R^2
@@ -67,7 +66,7 @@ def compute_surface_operators2d(pts):
 def main():
 
     # Input mesh
-    mesh = meshio.read('input/mesh.obj', file_format='obj')
+    mesh = meshio.read('meshes/mesh.obj', file_format='obj')
     pts = mesh.points
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 

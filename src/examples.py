@@ -2,14 +2,13 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET, normalize
-from rbf_fd_operators import compute_surface_operators
+from geopackages.vet import VET, normalize
+from geopackages.rbf import compute_surface_operators
 
 def main():
 
     # Input mesh
-    mesh = meshio.read('input/bunny.obj', file_format='obj')
+    mesh = meshio.read('meshes/bunny.obj', file_format='obj')
     pts = mesh.points
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 

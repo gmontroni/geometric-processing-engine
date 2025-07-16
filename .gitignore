@@ -1,0 +1,10 @@
+# Ignorar pastas __pycache__ em qualquer lugar
+**/__pycache__/
+
+/output/
+/verification/
+
+# Ignorar arquivos compilados Python
+*.pyc
+*.pyo
+*.pyd

@@ -2,10 +2,9 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), 'src'))
-from pyvet import VET
-from parallelTransport import parallelTransport
-from objtovtk import addVelocities_obj2vtk
+from geopackages.vet.pyvet import VET
+from geopackages.paralleltransport.parallelTransport import transportVector
+from geopackages.obj2vtk import addVelocities_obj2vtk
 
 def main():
 
@@ -13,12 +12,12 @@ def main():
     # Verificar se um arquivo foi especificado
     if len(sys.argv) <= 1:
         print("Erro: É necessário especificar um arquivo de malha.")
-        print("Uso: python3 vectorHeat.py <arquivo.obj>")
+        print("Uso: uv run src/transport.py <arquivo.obj>")
         sys.exit(1)
         
     meshName = sys.argv[1]
     if '/' not in meshName:
-        fileName = f'input/{meshName}'
+        fileName = f'meshes/{meshName}'
     else:
         fileName = meshName
     # print(f"Carregando malha: {meshName}")
@@ -38,7 +37,7 @@ def main():
     del mesh
 
     # Transporte Paralelo
-    _, V = parallelTransport(pts,T,B,N,[1,0,0])         # usar sem a conectividade (não tem diferença)
+    _, V = transportVector(pts,T,B,N,[1,0,0])         # usar sem a conectividade (não tem diferença)
 
     # vtk version
     addVelocities_obj2vtk(fileName, V)

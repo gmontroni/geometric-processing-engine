@@ -19,3 +19,9 @@ where = ["src"]
 dev = [
     "ipykernel>=6.29.5",
 ]
+
+[tool.mypy]
+disable_error_code = [
+    "import-untyped",
+    "import-not-found",
+]

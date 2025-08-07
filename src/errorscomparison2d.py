@@ -1,5 +1,5 @@
 import numpy as np
-import meshio, sys, os
+import meshio, sys, os  
 import polyscope as ps
 
 from geopackages.vet import VET
@@ -171,8 +171,9 @@ def main():
     #     print(f'Índices das linhas nulas: {zero_rowsLc[:10]}')  # mostra primeiras 10
 
     source = 1784
-    delta = np.zeros(nopts)
-    delta[source] = 1
+    # delta = np.zeros(nopts)
+    # delta[source] = 1
+    delta = np.sin(pts[:,0]) + np.cos(pts[:,2])
     print('Exemplo 07: Equação do calor via Laplaciano')
     t = 0.01
     f = np.linalg.solve(np.eye(nopts) - t*Lc, delta)
@@ -183,10 +184,11 @@ def main():
     print('Exemplo 08: Equação do calor via Divergente do Gradiente')
     divdoGrad = (Gx2D @ Gx2D + Gy2D @ Gy2D).copy()
 
-    delta_divgrad = np.zeros(nopts)
-    delta_divgrad[source] = 1
+    # delta_divgrad = np.zeros(nopts)
+    # delta_divgrad[source] = 1
     t = 0.01
-    f_divgrad = np.linalg.solve(np.eye(nopts)-t*divdoGrad, delta_divgrad)
+    # f_divgrad = np.linalg.solve(np.eye(nopts)-t*divdoGrad, delta_divgrad)
+    f_divgrad = delta = np.sin(pts[:,0]) + np.cos(pts[:,2])
     for i in range(1,5):
         f_divgrad = np.linalg.solve(np.eye(nopts)-t*divdoGrad, f_divgrad)
 

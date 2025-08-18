@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.spatial import KDTree
-from .weights_rbf_fd_2d import rbf_fd_weights, rbf_fd_weights_derivatives_only
+from rbf.weights_rbf_fd_2d import rbf_fd_weights, rbf_fd_weights_derivatives_only
 
 def compute_surface_operators2d(pts):
     # pts: n x 3

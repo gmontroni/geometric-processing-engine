@@ -2,8 +2,8 @@ import numpy as np
 import meshio, sys, os  
 import polyscope as ps
 
-from geopackages.vet import VET
-from geopackages.rbf import compute_surface_operators2d
+from vet import VET
+from rbf import compute_surface_operators2d
 
 def main():
 

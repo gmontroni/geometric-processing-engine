@@ -5,7 +5,7 @@ import scipy.spatial.distance as sd
 import numpy.polynomial.polynomial as pp
 from scipy.spatial import KDTree
 
-from geopackages.vet import VET
+from vet import VET
 
 def rbf_fd_weights(X, ctr, s, d):
   #   X : each row contains one node in R^2

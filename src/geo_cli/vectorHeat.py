@@ -5,10 +5,10 @@ import polyscope as ps
 from scipy.sparse.linalg import spsolve
 from scipy.sparse import eye, csr_matrix
 
-from geopackages.vet.pyvet import VET
-# from geopackages.paralleltransport import transportVectorv2
-from geopackages.vectorheat import buildSourceVectors, computeConnectionLaplacian, buildY0, buildVecHeatOperator, solveVectorHeat
-from geopackages.rbf.rbf_fd_operators import compute_surface_operators3d
+from vet.pyvet import VET
+# from paralleltransport import transportVectorv2
+from vectorheat import buildSourceVectors, computeConnectionLaplacian, buildY0, buildVecHeatOperator, solveVectorHeat
+from rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
 

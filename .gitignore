@@ -7,6 +7,8 @@ output/**
 verification/**
 !verification/.gitkeep
 
+*.egg-info
+
 # Ignorar arquivos compilados Python
 *.pyc
 *.pyo

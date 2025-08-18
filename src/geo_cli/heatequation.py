@@ -3,9 +3,9 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from geopackages.vet.pyvet import VET
-from geopackages.vet.vector_operators import normalize_mesh
-from geopackages.rbf.rbf_fd_operators import compute_surface_operators, compute_surface_operators3d, compute_surface_operators_with_reliability
+from vet.pyvet import VET
+from vet.vector_operators import normalize_mesh
+from rbf.rbf_fd_operators import compute_surface_operators, compute_surface_operators3d, compute_surface_operators_with_reliability
 
 def main():
 

@@ -3,14 +3,27 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from geopackages.vet import VET, normalize
-from geopackages.vet.vector_operators import surfProjection
-from geopackages.rbf.rbf_fd_operators import compute_surface_operators3d
+from vet.pyvet import VET, normalize
+from vet.vector_operators import surfProjection
+from rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
 
     # Input mesh
-    mesh = meshio.read('meshes/sphere.obj', file_format='obj')
+    # Verificar se um arquivo foi especificado
+    if len(sys.argv) <= 1:
+        print("Erro: É necessário especificar um arquivo de malha.")
+        print("Uso: uv run src/operators3d-tests.py <arquivo.obj>")
+        sys.exit(1)
+        
+    meshName = sys.argv[1]
+    if '/' not in meshName:
+        fileName = f'meshes/{meshName}'
+    else:
+        fileName = meshName
+    # print(f"Carregando malha: {meshName}")
+
+    mesh = meshio.read(fileName, file_format='obj')
     pts = mesh.points
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 
@@ -23,6 +36,7 @@ def main():
     print('Construindo os operadores via RBF-FD...')
     # Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators(pts, T, B)
     Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators3d(pts, T, B, N)
+    # Gx3D, Gy3D, Gz3D, Lc, vecIdx = compute_surface_operators_with_reliability(pts, T, B, N)
 
     # Função bem definida
     # u = pts[:,0]
@@ -51,7 +65,7 @@ def main():
     exactLapla = (1 - 2*pts[:,0] - pts[:,0]**2) * u
 
     print('Exemplo 01: Gradiente')
-    gradX, gradY, gradZ = Gx3D @ u, Gy3D @ u, Gz3D @ u
+    gradX, gradY, gradZ = Gx3D @ u, Gy3D@ u, Gz3D @ u
     grad = np.hstack((gradX.reshape(-1,1), gradY.reshape(-1,1), gradZ.reshape(-1,1)))
     gradient = -normalize(grad)
 
@@ -84,7 +98,11 @@ def main():
     infNormGrad = np.max(erroGrad)
     print('O erro do Gradiente na norma infinita é: ', infNormGrad)
 
-    erroLap = np.abs(exactLapla - div)
+    erroDiv = np.abs(exactLapla - div)
+    infNOrmDiv = np.max(erroDiv)
+    print('O erro do Divergente na norma infinita é: ', infNOrmDiv)
+
+    erroLap = np.abs(exactLapla - Lapla)
     infNOrmLap = np.max(erroLap)
     print('O erro do Laplaciano na norma infinita é: ', infNOrmLap)
 
@@ -92,6 +110,9 @@ def main():
 
     mseGrad = np.mean(erroGrad**2)
     print('O erro quadrático médio (MSE) do Gradiente é: ', mseGrad)
+
+    mseDiv = np.mean(erroDiv**2)
+    print('O erro quadrático médio (MSE) do Divergente é: ', mseDiv)
 
     mseLap = np.mean(erroLap**2)
     print('O erro quadrático médio (MSE) do Laplaciano é: ', mseLap)
@@ -111,6 +132,7 @@ def main():
     ps_mesh.add_scalar_quantity("Laplaciano", Lapla, cmap='turbo')
     ps_mesh.add_scalar_quantity("Erro do Gradiente", graderror, cmap='turbo')
     ps.register_point_cloud("Ponto fonte", pts[source,:].reshape((1,-1)), radius=0.003, color=(0,0,0))
+    # ps.register_point_cloud("Vizinhos do ponto fonte", pts[vecIdx[source],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
 
     ps.show()
 

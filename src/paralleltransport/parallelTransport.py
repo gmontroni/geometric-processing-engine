@@ -1,5 +1,5 @@
 import numpy as np
-from geopackages.vet.vector_operators import tangentPlane, unitVector, surfProjection, convert3Drealto2D
+from vet.vector_operators import tangentPlane, unitVector, surfProjection, convert3Drealto2D
 
 # Transporte paralelo
 def transportVector(vertices, basis_x, basis_y, normal, initial_vector = None, connectivity = None, rings = None):

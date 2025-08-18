@@ -3,8 +3,8 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from geopackages.vet.pyvet import VET
-from geopackages.rbf.rbf_fd_operators import rbf_fd_weights 
+from vet.pyvet import VET
+from rbf.rbf_fd_operators import rbf_fd_weights 
 
 def main():
 

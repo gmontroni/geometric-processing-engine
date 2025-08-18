@@ -3,7 +3,7 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from geopackages.vet.pyvet import VET
+from vet.pyvet import VET
 
 # Global variables for interactive parameters
 w_theta = 0.34

@@ -3,8 +3,8 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from geopackages.vet.pyvet import VET
-from geopackages.rbf.rbf_fd_operators import compute_surface_operators3d
+from vet.pyvet import VET
+from rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
 
@@ -42,7 +42,7 @@ def main():
 
     # Copy para Dirichlet
     lap3D_dirichlet = lap3D.copy()
-    # Lc_dirichlet = Lc.copy()
+    Lc_dirichlet = Lc.copy()
     source_dirichlet = source_function.copy()
 
     # Indices da condição de contorno de Dirichlet
@@ -54,7 +54,7 @@ def main():
         row = np.zeros(nopts)
         row[idx] = 1
         lap3D_dirichlet[idx,:] = row
-        # Lc_dirichlet[idx,:] = row
+        Lc_dirichlet[idx,:] = row
         source_dirichlet[idx] = 2.0
 
     ## Condições de contorno de Dirichlet p2 = -1
@@ -62,11 +62,11 @@ def main():
         row = np.zeros(nopts)
         row[idx] = 1
         lap3D_dirichlet[idx,:] = row
-        # Lc_dirichlet[idx,:] = row
+        Lc_dirichlet[idx,:] = row
         source_dirichlet[idx] = -1.0
 
     phi_dirichlet_lap = np.linalg.solve(lap3D_dirichlet, source_dirichlet)
-    # phi_dirichlet_lc = np.linalg.solve(Lc_dirichlet, source_dirichlet)
+    phi_dirichlet_lc = np.linalg.solve(Lc_dirichlet, source_dirichlet)
 
     # Draw
     ps.init()
@@ -75,7 +75,7 @@ def main():
     ps_mesh = ps.register_surface_mesh("Mesh", pts, tri, smooth_shade=True)
     ps_mesh.add_scalar_quantity("Função", source_dirichlet, cmap='turbo')
     ps_mesh.add_scalar_quantity("Equação de Poisson Div do Grad", phi_dirichlet_lap, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Equação de Poisson", phi_dirichlet_lc, cmap='turbo')
+    ps_mesh.add_scalar_quantity("Equação de Poisson", phi_dirichlet_lc, cmap='turbo')
     # ps.register_point_cloud("Vizinhos do ponto fonte", pts[vecIdx[source],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
 
     ps.show()

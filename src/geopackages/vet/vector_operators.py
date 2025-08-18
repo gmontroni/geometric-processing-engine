@@ -126,3 +126,19 @@ def complexRotation(angle):
         for j in range(i):
             R[i, j] = np.conj(R[j, i])
     return R
+
+def normalize_mesh(vertices):
+
+    min_coords = vertices.min(axis=0)
+    max_coords = vertices.max(axis=0)
+
+    center = (min_coords + max_coords) / 2
+    vertices_centered = vertices - center
+
+    scale = (max_coords - min_coords).max()
+    vertices_scaled = vertices_centered / scale
+
+    # If you want from [0, 1] instead of [-0.5, 0.5], shift and rescale
+    vertices_unit = vertices_scaled 
+
+    return vertices_unit

@@ -4,7 +4,7 @@ import polyscope as ps
 from scipy.spatial import KDTree
 
 from geopackages.vet.pyvet import VET
-# from geopackages.rbf.rbf_fd_operators import  
+from geopackages.rbf.rbf_fd_operators import rbf_fd_weights 
 
 def main():
 
@@ -126,12 +126,72 @@ def main():
         best_indices = np.argsort(neighbor_scores)[:max_neighbors]
         idx = idx_full[best_indices]
         vecindices[i, :len(idx), 0] = idx
+
+    print('Construindo os operadores via RBF-FD...')
+    ### Calculo dos operadores
+    Lc    = np.zeros((nopts, nopts))
+    Gx3D  = np.zeros((nopts, nopts))
+    Gy3D  = np.zeros((nopts, nopts))
+    Gz3D  = np.zeros((nopts, nopts))
+    for i in range(nopts):
+        # # Get k nearest neighbors
+        # _, idx_full = tree.query(pts[i,:], k=k+1)
+        # idx_full = idx_full[1:]  # Exclude the point itself
         
+        # # Get scores for these neighbors
+        # neighbor_scores = scores[i, :len(idx_full)]
+        
+        # # Select the max_neighbors with the lowest scores (most reliable)
+        # best_indices = np.argsort(neighbor_scores)[:max_neighbors]
+        # idx = idx_full[best_indices]
+        idx = vecindices[i,:,:].reshape(vecindices.shape[1],).tolist()
+
+        # Compute operators using the selected reliable neighbors
+        R = np.hstack((T[i,:].reshape(3,1), B[i,:].reshape(3,1)))
+        Xloc = R.T @ (pts[i,:] - pts[idx,:]).T      
+        Xloc = Xloc.T
+        W = rbf_fd_weights(Xloc, np.array([0, 0]), 5, 5)
+        Lc[i, idx] = W[:,0]
+
+        temp = R @ W[:,1:3].T
+        Gx3D[i,idx] = temp[0,:]
+        Gy3D[i,idx] = temp[1,:]
+        Gz3D[i,idx] = temp[2,:]
+
+    ### Aplicação dos operadores
+    source_function = np.zeros(nopts)
+    source = 40               ## Ponto fonte (centro paraboloide)
+    # source = [source] + mesh.compute_k_ring(source,1)
+
+    lap3D = Gx3D @ Gx3D + Gy3D @ Gy3D + Gz3D @ Gz3D       # Divergente do Gradiente 3D
+
+    # Copy para Dirichlet
+    lap3D_heat = lap3D.copy()
+    Lc_heat = Lc.copy()
+
+    source_heat = source_function.copy()
+    source_heat[source] = 1
+    # source_heat = source_heat / np.max(source_heat)
+
+    t = 0.01
+    phi_lap = source_heat.copy()
+    phi_Lc = source_heat.copy()
+    # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
+    phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
+    phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
+    for i in range(1,3):
+        phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
+        phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
+
+
     # Draw
     ps.init()
     ps.set_SSAA_factor(2)
     ps.set_ground_plane_mode("none")
     ps_mesh = ps.register_surface_mesh("Mesh", pts, tri, smooth_shade=True)
+    ps_mesh.add_scalar_quantity("Função", source_heat, cmap='turbo')
+    ps_mesh.add_scalar_quantity("Equação do Calor", phi_lap, cmap='turbo')
+    ps_mesh.add_scalar_quantity("Equação do Calor Lc", phi_Lc, cmap='turbo')
     # ps_mesh.add_scalar_quantity("Função", u, cmap='turbo')
     # ps_mesh.add_scalar_quantity("f0 eq Calor", f0, cmap='turbo')
     # ps_mesh.add_scalar_quantity("Solução eq Calor", f, cmap='turbo')

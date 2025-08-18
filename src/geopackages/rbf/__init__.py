@@ -21,7 +21,6 @@ from .rbf_fd_operators import (compute_surface_operators2d,
                                   compute_surface_operators,
                                   compute_surface_operators_score,
                                   compute_surface_operators_with_reliability,
-                                  compute_surface_operators3dd
 )
 
 __all__ = [

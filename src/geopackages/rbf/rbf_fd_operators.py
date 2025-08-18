@@ -85,7 +85,7 @@ def compute_surface_operators(pts, T, B):
 
     return Gx3D, Gy3D, Gz3D, Lc
 
-def compute_surface_operators_score(pts, N, k=50, w_theta=0.4, w_proj=0.4, w_dist=0.2, 
+def compute_surface_operators_score(pts, N, k=50, w_theta=0.34, w_proj=0.33, w_dist=0.33, 
                                    theta_max=np.pi, epsilon=1e-6):
     """
     Compute a connectivity score between points in a point cloud.
@@ -175,8 +175,8 @@ def compute_surface_operators_score(pts, N, k=50, w_theta=0.4, w_proj=0.4, w_dis
     
     return scores, indices
 
-def compute_surface_operators_with_reliability(pts, T, B, N, k=30, max_neighbors=25, 
-                                             w_theta=0.4, w_proj=0.4, w_dist=0.2):
+def compute_surface_operators_with_reliability(pts, T, B, N, k=50, max_neighbors=30, 
+                                             w_theta=0.34, w_proj=0.33, w_dist=0.33):
     """
     Compute surface operators using the reliability score to select the most reliable neighbors.
     

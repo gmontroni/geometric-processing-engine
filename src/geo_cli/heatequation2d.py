@@ -61,19 +61,19 @@ def main():
 
     t = 0.01
     epsil = 1e-4
-    M = (1 + epsil) * np.eye(nopts) - t * lap2D_heat
+    M_lap = (1 + epsil) * np.eye(nopts) - t * lap2D_heat
+    M_lc = (1 + epsil) * np.eye(nopts) - t * Lc_heat
 
-    
     phi_lap = source_heat.copy()
     phi_Lc = source_heat.copy()
-    phi_lap = np.linalg.solve(M, phi_lap)
-    phi_Lc = np.linalg.solve(M, phi_Lc)
+    phi_lap = np.linalg.solve(M_lap, phi_lap)
+    phi_Lc = np.linalg.solve(M_lc, phi_Lc)
     # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap2D_heat, phi_lap)
     # phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
     for i in range(1,3):
         # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap2D_heat, phi_lap)
-        phi_lap = np.linalg.solve(M, phi_lap)
-        phi_Lc = np.linalg.solve(M, phi_Lc)
+        phi_lap = np.linalg.solve(M_lap, phi_lap)
+        phi_Lc = np.linalg.solve(M_lc, phi_Lc)
         # phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
 
     # Draw

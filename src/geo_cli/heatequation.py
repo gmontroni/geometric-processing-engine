@@ -3,8 +3,8 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from vet.pyvet import VET
-from vet.vector_operators import normalize_mesh
+from mesh.pyvet import VET
+from mesh.vector_operators import normalize_mesh
 from rbf.rbf_fd_operators import compute_surface_operators, compute_surface_operators3d, compute_surface_operators_with_reliability
 
 def main():

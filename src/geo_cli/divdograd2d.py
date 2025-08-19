@@ -2,7 +2,7 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 
-from vet import VET
+from mesh import VET
 from rbf import compute_surface_operators2d, compute_surface_operators3d
 
 

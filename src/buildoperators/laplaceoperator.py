@@ -1,6 +1,6 @@
 import numpy as np
-from vet import VET
-from vet.vector_operators import normalize_mesh
+from mesh import VET
+from mesh.vector_operators import normalize_mesh
 from rbf.rbf_fd_operators import compute_surface_operators
 
 def build_laplace_operators(mesh_path):

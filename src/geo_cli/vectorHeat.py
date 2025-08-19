@@ -5,7 +5,7 @@ import polyscope as ps
 from scipy.sparse.linalg import spsolve
 from scipy.sparse import eye, csr_matrix
 
-from vet.pyvet import VET
+from mesh.pyvet import VET
 # from paralleltransport import transportVectorv2
 from vectorheat import buildSourceVectors, computeConnectionLaplacian, buildY0, buildVecHeatOperator, solveVectorHeat
 from rbf.rbf_fd_operators import compute_surface_operators3d

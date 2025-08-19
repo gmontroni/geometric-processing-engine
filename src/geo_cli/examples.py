@@ -2,7 +2,7 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 
-from vet import VET, normalize
+from mesh import VET, normalize
 from rbf import compute_surface_operators
 
 def main():

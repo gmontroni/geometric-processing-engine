@@ -1,5 +1,5 @@
 import numpy as np
-from vet.vector_operators import normalize, norm3d
+from mesh.vector_operators import normalize, norm3d
 
 class VET:
     

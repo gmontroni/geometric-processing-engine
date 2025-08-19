@@ -3,8 +3,8 @@ import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
 
-from vet.pyvet import VET, normalize
-from vet.vector_operators import surfProjection
+from mesh.pyvet import VET, normalize
+from mesh.vector_operators import surfProjection
 from rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():

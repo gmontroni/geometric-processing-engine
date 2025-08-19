@@ -2,7 +2,7 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 
-from vet.pyvet import VET
+from mesh.pyvet import VET
 from paralleltransport.parallelTransport import transportVector
 from obj2vtk import addVelocities_obj2vtk
 

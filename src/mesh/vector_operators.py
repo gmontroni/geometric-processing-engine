@@ -138,7 +138,7 @@ def normalize_mesh(vertices):
     scale = (max_coords - min_coords).max()
     vertices_scaled = vertices_centered / scale
 
-    # If you want from [0, 1] instead of [-0.5, 0.5], shift and rescale
-    vertices_unit = vertices_scaled 
+    # Default [-0.5, 0.5]
+    vertices_unit = vertices_scaled
 
     return vertices_unit

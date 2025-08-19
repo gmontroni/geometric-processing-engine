@@ -15,8 +15,8 @@ def compute_surface_operators2d(pts):
 
     for i in range(nopts):
         
-        _, idx = tree.query(pts[i,:], k=30) # 50 vizinhos mais próximos
-        W = rbf_fd_weights(pts[idx,:], pts[i,:], 5, 3) # 5 phs, 5 grau do polinomio
+        _, idx = tree.query(pts[i,:], k=20) # 50 vizinhos mais próximos
+        W = rbf_fd_weights(pts[idx,:], pts[i,:], 3, 2) # 5 phs, 5 grau do polinomio
         
         Lc[i, idx] = W[:,0]
         Gx2D[i, idx] = W[:,1]

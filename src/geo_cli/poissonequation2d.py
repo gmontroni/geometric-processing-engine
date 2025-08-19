@@ -29,7 +29,7 @@ def main():
     print('Exemplo: Problema de Poisson com condições de Dirichlet (Exemplo 39.1)')
 
     ## Função fonte f(x,y) = -5pi²/4 sin(pi*x)cos(pi * y/2)
-    # source_function = 0.5 * np.ones(nopts)
+    # source_function = np.zeros(nopts)
     source_function = -5 * np.pi**2 / 4 * np.sin(np.pi * pts[:,0]) * np.cos(np.pi * pts[:,2] / 2)
 
     ## Solução exata u(x,y) = sin(pi * x)cos(pi * y/2)
@@ -40,6 +40,8 @@ def main():
     ## Condições de fronteira
     # y = 0 (onde u = sin(pi * x))
     gamma1_indices = np.where(np.abs(pts[:,2]) < tolerance)[0]
+
+    # gamma2_indices = np.where(np.abs(pts[:,2] - 1) < tolerance)[0]
 
     gamma2_indices = np.where(
         (np.abs(pts[:,0]) < tolerance) |      # x = 0

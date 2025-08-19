@@ -4,6 +4,7 @@ import polyscope as ps
 from scipy.spatial import KDTree
 
 from mesh.pyvet import VET
+from mesh.vector_operators import normalize_mesh
 from rbf.rbf_fd_operators import compute_surface_operators3d
 
 def main():
@@ -23,7 +24,8 @@ def main():
     # print(f"Carregando malha: {meshName}")
 
     mesh = meshio.read(fileName, file_format='obj')
-    pts = mesh.points
+    # pts = mesh.points
+    pts = normalize_mesh(mesh.points)
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 
 
@@ -33,8 +35,8 @@ def main():
     # del mesh
 
     source_function = np.zeros(nopts)
-    source = [4102, 4142]                       ## Pontos fontes para o bunny
-    # source = [2838, 2718]                       ## Pontos fontes para a esfera
+    source = [4102, 4142]                           ## Pontos fontes para o bunny
+    # source = [2838, 2718]                         ## Pontos fontes para a esfera
 
     print('Construindo os operadores via RBF-FD...')
     Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators3d(pts, T, B, N)
@@ -77,6 +79,12 @@ def main():
     ps_mesh.add_scalar_quantity("Equação de Poisson Div do Grad", phi_dirichlet_lap, cmap='turbo')
     ps_mesh.add_scalar_quantity("Equação de Poisson", phi_dirichlet_lc, cmap='turbo')
     # ps.register_point_cloud("Vizinhos do ponto fonte", pts[vecIdx[source],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
+
+    # Bounding box mesh
+    mesh1 = meshio.read('meshes/bbox.obj', file_format='obj')
+    pts1 = mesh1.points
+    tri1 = np.array(mesh1.cells_dict['triangle'])
+    ps_mesh1 = ps.register_surface_mesh("Bbox", pts1, tri1, transparency=0.15)
 
     ps.show()
 

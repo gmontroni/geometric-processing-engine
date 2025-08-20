@@ -25,7 +25,8 @@ def main():
 
     mesh = meshio.read(fileName, file_format='obj')
     # pts = mesh.points
-    pts = normalize_mesh(mesh.points)
+    sft = 0.5
+    pts = normalize_mesh(mesh.points) + sft
     tri = np.array(mesh.cells_dict['triangle'])
     nopts, _ = pts.shape[0], tri.shape[0] 
 
@@ -34,7 +35,7 @@ def main():
     T, B, N = mesh.computeOrthonormalBase()
     # del mesh
 
-    source_function = np.zeros(nopts)
+    source_function = np.zeros(nopts)               # Equação de Laplace
     source = [4102, 4142]                           ## Pontos fontes para o bunny
     # source = [2838, 2718]                         ## Pontos fontes para a esfera
 
@@ -43,7 +44,8 @@ def main():
     lap3D = Gx3D @ Gx3D + Gy3D @ Gy3D + Gz3D @ Gz3D       # Divergente do Gradiente 3D
 
     # Copy para Dirichlet
-    lap3D_dirichlet = lap3D.copy()
+    epsil = 1e-4
+    lap3D_dirichlet = epsil * np.eye(nopts) + lap3D.copy()
     Lc_dirichlet = Lc.copy()
     source_dirichlet = source_function.copy()
 
@@ -51,13 +53,21 @@ def main():
     gamma1_indices = [source[0]] + mesh.compute_k_ring(source[0],2)
     gamma2_indices = [source[1]] + mesh.compute_k_ring(source[1],2)
 
+    source_dirichlet[gamma1_indices] = 1.0
+    source_dirichlet = np.exp(-np.linalg.norm(pts - pts[source[0],:], axis=1)**2 / 0.08**2)
+    source_dirichlet = source_dirichlet / np.max(source_dirichlet)
+
+    source_dirichlet[gamma2_indices] = -1.0
+    source_dirichlet = np.exp(-np.linalg.norm(pts - pts[source[1],:], axis=1)**2 / 0.08**2)
+    source_dirichlet = source_dirichlet / np.max(source_dirichlet)
+
     ## Condições de contorno de Dirichlet p1 = 1
     for idx in gamma1_indices:
         row = np.zeros(nopts)
         row[idx] = 1
         lap3D_dirichlet[idx,:] = row
         Lc_dirichlet[idx,:] = row
-        source_dirichlet[idx] = 2.0
+        # source_dirichlet[idx] = 1.0
 
     ## Condições de contorno de Dirichlet p2 = -1
     for idx in gamma2_indices:
@@ -65,7 +75,7 @@ def main():
         row[idx] = 1
         lap3D_dirichlet[idx,:] = row
         Lc_dirichlet[idx,:] = row
-        source_dirichlet[idx] = -1.0
+        # source_dirichlet[idx] = -1.0
 
     phi_dirichlet_lap = np.linalg.solve(lap3D_dirichlet, source_dirichlet)
     phi_dirichlet_lc = np.linalg.solve(Lc_dirichlet, source_dirichlet)
@@ -82,7 +92,7 @@ def main():
 
     # Bounding box mesh
     mesh1 = meshio.read('meshes/bbox.obj', file_format='obj')
-    pts1 = mesh1.points
+    pts1 = mesh1.points + sft
     tri1 = np.array(mesh1.cells_dict['triangle'])
     ps_mesh1 = ps.register_surface_mesh("Bbox", pts1, tri1, transparency=0.15)
 

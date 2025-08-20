@@ -42,12 +42,12 @@ def compute_surface_operators3d(pts, T, B, N):
         
         _, idx = tree.query(pts[i,:], k=50)
         sortedIdx = np.argsort(cosTheta[i, idx])
-        idxnormals = sortedIdx[:30]
+        idxnormals = sortedIdx[:20]
 
         R = np.hstack((T[i,:].reshape(3,1), B[i,:].reshape(3,1)))
         Xloc = R.T @ (pts[i,:] - pts[idx[idxnormals],:]).T      
         Xloc = Xloc.T
-        W = rbf_fd_weights(Xloc, np.array([0, 0]), 5, 5)        # 5 5
+        W = rbf_fd_weights(Xloc, np.array([0, 0]), 3, 2)        # 5 5
         Lc[i, idx[idxnormals]] = W[:,0]
 
         temp = R[:, :2] @ W[:,1:3].T
@@ -70,12 +70,12 @@ def compute_surface_operators(pts, T, B):
     Gz3D  = np.zeros((nopts, nopts))
     for i in range(nopts):
         
-        _, idx = tree.query(pts[i,:], k=30)
+        _, idx = tree.query(pts[i,:], k=20)
 
         R = np.hstack((T[i,:].reshape(3,1), B[i,:].reshape(3,1)))
         Xloc = R.T @ (pts[i,:] - pts[idx,:]).T      
         Xloc = Xloc.T
-        W = rbf_fd_weights(Xloc, np.array([0, 0]), 5, 5)        # 5 5
+        W = rbf_fd_weights(Xloc, np.array([0, 0]), 3, 2)        # 5 5
         Lc[i, idx] = W[:,0]
 
         temp = R @ W[:,1:3].T

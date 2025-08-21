@@ -32,7 +32,7 @@ def main():
     T, B, N = mesh.computeOrthonormalBase()
     # del mesh
 
-    stencils = [4102,3330,2292,3698,3945,2275,4098]       # bunny
+    # stencils = [4102,3330,2292,3698,3945,2275,4098]       # bunny
     # stencils = [11678,7599,7716,8365]         # knot
 
     print('Construindo o estêncil...')
@@ -165,7 +165,7 @@ def main():
     source_function = np.zeros(nopts)
     # source = 316    
     source = 4102                                    
-    ring = [source] + mesh.compute_k_ring(source,2)
+    ring = [source] + mesh.compute_k_ring(source,3)
 
     # Applying Gaussian
     source_heat = source_function.copy()
@@ -176,9 +176,9 @@ def main():
     t = 0.01
     phi_lap = source_heat.copy()
     phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
-    phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_lap)
-    # for i in range(1,3):
-        # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
+    # phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_lap)
+    for i in range(1,3):
+        phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
         # phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
 
     # Draw
@@ -188,10 +188,10 @@ def main():
     ps_mesh = ps.register_surface_mesh("Mesh", pts, tri, smooth_shade=True)
     ps_mesh.add_scalar_quantity("Função", source_heat, cmap='turbo')
     ps_mesh.add_scalar_quantity("Equação do Calor", phi_lap, cmap='turbo')
-    ps_mesh.add_scalar_quantity("Equação do Calor Lc", phi_Lc, cmap='turbo')
+    # ps_mesh.add_scalar_quantity("Equação do Calor Lc", phi_Lc, cmap='turbo')
     # ps.register_point_cloud("Ponto fonte", pts[source,:].reshape((1,-1)), radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Pontos Fontes", pts[stencils,:], radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Vizinhos do Pontos Fontes", pts[indices[stencils],:], radius=0.003, color=(1,0,0))
+    # ps.register_point_cloud("Pontos Fontes", pts[stencils,:], radius=0.003, color=(0,0,0))
+    # ps.register_point_cloud("Vizinhos do Pontos Fontes", pts[indices[stencils],:], radius=0.003, color=(1,0,0))
 
     ps.show()
 

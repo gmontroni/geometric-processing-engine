@@ -2,6 +2,7 @@ import numpy as np
 import meshio, sys, os
 import polyscope as ps
 from scipy.spatial import KDTree
+import random
 
 from mesh.pyvet import VET
 # from rbf.rbf_fd_operators import  
@@ -35,8 +36,9 @@ def main():
     # source = 11678
     # source = 7599
     # source = 7716
-    source = [4102,3330,2292,3698,3945,2275,4098]       # bunny
+    # source = [4102,3330,2292,3698,3945,2275,4098]       # bunny
     # source = [11678,7599,7716,8365]         # knot
+    source = [random.randint(1, nopts) for _ in range(1)]
 
     print('Construindo o estêncil...')
     # Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators(pts, T, B)
@@ -111,14 +113,15 @@ def main():
             # outliers[i, j] = 1 if np.dot(p_to_q, n_p) > 0 else 0
             outliers[i, j] = np.dot(n_p, n_q)
 
-    max_neighbors = 25
+    max_neighbors = 22
     vecindices = np.zeros((nopts, max_neighbors,1), dtype=int)
-
+    indices_or = np.zeros((nopts, max_neighbors,1), dtype=int)
     for i in range(nopts):
         # Get k nearest neighbors
         _, idx_full = tree.query(pts[i,:], k=k+1)
-        idx_full = idx_full[1:]  # Exclude the point itself
-        
+        idx_full = idx_full[1:max_neighbors]  # Exclude the point itself
+        indices_or[i, :len(idx_full), 0] = idx_full
+
         # Get scores for these neighbors
         neighbor_scores = scores[i, :len(idx_full)]
         
@@ -126,12 +129,16 @@ def main():
         best_indices = np.argsort(neighbor_scores)[:max_neighbors]
         idx = idx_full[best_indices]
         vecindices[i, :len(idx), 0] = idx
-        
+
+    ## save vecindices and indices_or as .txt where each row is a point and each column is a neighbor
+    np.savetxt("vecindices.txt", vecindices.reshape(nopts, -1), fmt='%d')
+    np.savetxt("indices_or.txt", indices_or.reshape(nopts, -1), fmt='%d')
+
     # Draw
     ps.init()
     ps.set_SSAA_factor(2)
     ps.set_ground_plane_mode("none")
-    ps_mesh = ps.register_surface_mesh("Mesh", pts, tri, smooth_shade=True)
+    ps_mesh = ps.register_surface_mesh("Mesh", pts, tri, smooth_shade=True, transparency=0.5)
     # ps_mesh.add_scalar_quantity("Função", u, cmap='turbo')
     # ps_mesh.add_scalar_quantity("f0 eq Calor", f0, cmap='turbo')
     # ps_mesh.add_scalar_quantity("Solução eq Calor", f, cmap='turbo')
@@ -142,8 +149,9 @@ def main():
     # ps_mesh.add_scalar_quantity("Laplaciano", Lapla, cmap='turbo')
     # ps_mesh.add_scalar_quantity("Erro do Gradiente", graderror, cmap='turbo')
     # ps.register_point_cloud("Ponto fonte", pts[source,:].reshape((1,-1)), radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Ponto fonte", pts[source,:], radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Vizinhos do ponto fonte", pts[vecindices[source,:,:],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
+    ps.register_point_cloud("Ponto fonte", pts[source,:], radius=0.004, color=(0,0,0))
+    ps.register_point_cloud("Stencil Original", pts[indices_or[source,:,:],:].reshape((-1,3)), radius=0.003, color=(0,1,0))
+    ps.register_point_cloud("Meu Stencil", pts[vecindices[source,:,:],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
 
     ps.show()
 

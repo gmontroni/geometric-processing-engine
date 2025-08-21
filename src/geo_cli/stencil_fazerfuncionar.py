@@ -30,13 +30,10 @@ def main():
     # Construção das coordenadas locais
     mesh = VET(pts, tri)
     T, B, N = mesh.computeOrthonormalBase()
-    del mesh
+    # del mesh
 
-    # source = 11678
-    # source = 7599
-    # source = 7716
-    source = [4102,3330,2292,3698,3945,2275,4098]       # bunny
-    # source = [11678,7599,7716,8365]         # knot
+    stencils = [4102,3330,2292,3698,3945,2275,4098]       # bunny
+    # stencils = [11678,7599,7716,8365]         # knot
 
     print('Construindo o estêncil...')
     # Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators(pts, T, B)
@@ -111,8 +108,8 @@ def main():
             # outliers[i, j] = 1 if np.dot(p_to_q, n_p) > 0 else 0
             outliers[i, j] = np.dot(n_p, n_q)
 
-    max_neighbors = 25
-    vecindices = np.zeros((nopts, max_neighbors,1), dtype=int)
+    max_neighbors = 20
+    indices = []
 
     for i in range(nopts):
         # Get k nearest neighbors
@@ -124,8 +121,8 @@ def main():
         
         # Select the max_neighbors with the lowest scores (most reliable)
         best_indices = np.argsort(neighbor_scores)[:max_neighbors]
-        idx = idx_full[best_indices]
-        vecindices[i, :len(idx), 0] = idx
+        idx = idx_full[best_indices].tolist()
+        indices.append(idx)
 
     print('Construindo os operadores via RBF-FD...')
     ### Calculo dos operadores
@@ -144,13 +141,13 @@ def main():
         # # Select the max_neighbors with the lowest scores (most reliable)
         # best_indices = np.argsort(neighbor_scores)[:max_neighbors]
         # idx = idx_full[best_indices]
-        idx = vecindices[i,:,:].reshape(vecindices.shape[1],).tolist()
+        idx = indices[i]
 
         # Compute operators using the selected reliable neighbors
         R = np.hstack((T[i,:].reshape(3,1), B[i,:].reshape(3,1)))
         Xloc = R.T @ (pts[i,:] - pts[idx,:]).T      
         Xloc = Xloc.T
-        W = rbf_fd_weights(Xloc, np.array([0, 0]), 5, 5)
+        W = rbf_fd_weights(Xloc, np.array([0, 0]), 3, 2)
         Lc[i, idx] = W[:,0]
 
         temp = R @ W[:,1:3].T
@@ -159,30 +156,30 @@ def main():
         Gz3D[i,idx] = temp[2,:]
 
     ### Aplicação dos operadores
-    source_function = np.zeros(nopts)
-    source = 40               ## Ponto fonte (centro paraboloide)
-    # source = [source] + mesh.compute_k_ring(source,1)
-
     lap3D = Gx3D @ Gx3D + Gy3D @ Gy3D + Gz3D @ Gz3D       # Divergente do Gradiente 3D
 
     # Copy para Dirichlet
     lap3D_heat = lap3D.copy()
     Lc_heat = Lc.copy()
 
+    source_function = np.zeros(nopts)
+    # source = 316    
+    source = 4102                                    
+    ring = [source] + mesh.compute_k_ring(source,2)
+
+    # Applying Gaussian
     source_heat = source_function.copy()
-    source_heat[source] = 1
-    # source_heat = source_heat / np.max(source_heat)
+    source_heat[ring] = 1
+    source_heat = np.exp(-np.linalg.norm(pts - pts[source,:], axis=1)**2 / 0.08**2)
+    source_heat = source_heat / np.max(source_heat)
 
     t = 0.01
     phi_lap = source_heat.copy()
-    phi_Lc = source_heat.copy()
-    # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
     phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
-    phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
-    for i in range(1,3):
-        phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
-        phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
-
+    phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_lap)
+    # for i in range(1,3):
+        # phi_lap = np.linalg.solve(np.eye(nopts)-t*lap3D_heat, phi_lap)
+        # phi_Lc = np.linalg.solve(np.eye(nopts)-t*Lc_heat, phi_Lc)
 
     # Draw
     ps.init()
@@ -192,18 +189,9 @@ def main():
     ps_mesh.add_scalar_quantity("Função", source_heat, cmap='turbo')
     ps_mesh.add_scalar_quantity("Equação do Calor", phi_lap, cmap='turbo')
     ps_mesh.add_scalar_quantity("Equação do Calor Lc", phi_Lc, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Função", u, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("f0 eq Calor", f0, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Solução eq Calor", f, cmap='turbo')
-    # ps_mesh.add_vector_quantity("Gradiente Exato", exactGradient)
-    # ps_mesh.add_vector_quantity("Gradiente", gradient)
-    # ps_mesh.add_scalar_quantity("Divergente do Gradiente", div, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Laplaciano Exato", exactLapla, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Laplaciano", Lapla, cmap='turbo')
-    # ps_mesh.add_scalar_quantity("Erro do Gradiente", graderror, cmap='turbo')
     # ps.register_point_cloud("Ponto fonte", pts[source,:].reshape((1,-1)), radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Ponto fonte", pts[source,:], radius=0.003, color=(0,0,0))
-    ps.register_point_cloud("Vizinhos do ponto fonte", pts[vecindices[source,:,:],:].reshape((-1,3)), radius=0.003, color=(1,0,0))
+    ps.register_point_cloud("Pontos Fontes", pts[stencils,:], radius=0.003, color=(0,0,0))
+    ps.register_point_cloud("Vizinhos do Pontos Fontes", pts[indices[stencils],:], radius=0.003, color=(1,0,0))
 
     ps.show()
 

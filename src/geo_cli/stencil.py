@@ -38,7 +38,7 @@ def main():
     # source = 7716
     # source = [4102,3330,2292,3698,3945,2275,4098]       # bunny
     # source = [11678,7599,7716,8365]         # knot
-    source = [random.randint(1, nopts) for _ in range(50)]
+    source = [random.randint(1, nopts) for _ in range(1)]
 
     print('Construindo o estêncil...')
     # Gx3D, Gy3D, Gz3D, Lc = compute_surface_operators(pts, T, B)
